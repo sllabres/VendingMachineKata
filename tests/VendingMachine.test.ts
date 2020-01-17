@@ -1,8 +1,12 @@
 import { expect } from "chai";
 
+beforeEach(function () {
+  display = new DisplayFake();
+  vendingMachine = new VendingMachine(display);
+});
+
 describe('given no coin inserted', function () {
   it('displays "INSERT COIN" message', function () {
-    vendingMachine.vend();
     expect(Message.NoCoin).equals(display.CurrentMessage);
   });
 });
@@ -11,7 +15,6 @@ describe('given nickel inserted', function () {
   it('displays "$0.05" message', function () {
     var coinToInsert = new Disc(5, 21);
     vendingMachine.insertCoin(coinToInsert);
-    vendingMachine.vend();
     expect("$0.05").equals(display.CurrentMessage);
   });
 });
@@ -20,7 +23,6 @@ describe('given dime inserted', function () {
   it('displays "$0.10" message', function () {
     var coinToInsert = new Disc(2.2, 17);
     vendingMachine.insertCoin(coinToInsert);
-    vendingMachine.vend();
     expect("$0.10").equals(display.CurrentMessage);
   });
 });
@@ -29,7 +31,6 @@ describe('given quarter inserted', function () {
   it('displays "$0.25" message', function () {
     var coinToInsert = new Disc(5, 24);
     vendingMachine.insertCoin(coinToInsert);
-    vendingMachine.vend();
     expect("$0.25").equals(display.CurrentMessage);
   });
 });
@@ -39,7 +40,6 @@ describe('given two quarters inserted', function () {
     var coinToInsert = new Disc(5, 24);
     vendingMachine.insertCoin(coinToInsert);
     vendingMachine.insertCoin(coinToInsert);
-    vendingMachine.vend();
     expect("$0.50").equals(display.CurrentMessage);
   });
 });
@@ -48,9 +48,18 @@ describe('given invalid coin inserted', function () {
   it('displays "INSERT COIN" message and gives change', function () {
     var coinToInsert = new Disc(0, 0);
     vendingMachine.insertCoin(coinToInsert);
-    vendingMachine.vend();
     var change = vendingMachine.getChange();
     expect(Message.NoCoin).equals(display.CurrentMessage);
+    expect(1).equals(change.length);
+  });
+});
+
+describe('given quarter and then invalid coin inserted', function () {
+  it('displays "INSERT COIN" message and gives change', function () {
+    vendingMachine.insertCoin(new Disc(5, 24));
+    vendingMachine.insertCoin(new Disc(0, 0));
+    var change = vendingMachine.getChange();
+    expect("$0.25").equals(display.CurrentMessage);
     expect(1).equals(change.length);
   });
 });
@@ -126,7 +135,7 @@ class VendingMachine {
       this.display.update(DollarCurrencyFormat.Format(this.runningTotal));
     else {
       this.ejectedCoins.push(disc);
-      this.display.update(Message.NoCoin);
+      //this.display.update(Message.NoCoin);
     }
   }
 }
