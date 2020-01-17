@@ -71,6 +71,16 @@ describe('given cola product selected and no coins inserted', function () {
   });
 });
 
+
+describe('given cola product selected and wrong amount inserted', function () {
+  it('displays "PRICE" message', function () {
+    var quarter = new Disc(5, 24);
+    vendingMachine.insertCoin(quarter);
+    vendingMachine.vend("Cola");
+    expect("PRICE").equals(display.CurrentMessage);
+  });
+});
+
 describe('given cola product selected and right amount inserted', function () {
   it('displays "THANK YOU" message', function () {
     var quarter = new Disc(5, 24);
@@ -144,7 +154,7 @@ class VendingMachine {
   public vend(selection: string): void {
     this.display.update(Message.Price);
 
-    if(this.runningTotal > 0)
+    if(this.runningTotal == 100)
       this.display.update(Message.Thank);
   }
 
