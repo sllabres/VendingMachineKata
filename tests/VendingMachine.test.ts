@@ -10,16 +10,17 @@ describe('given no coin inserted', function () {
 describe('given valid coin inserted', function () {
 
   it('displays "$0.10" message', function () {
-    vendingMachine.insertCoinByDimensions(2.2, 1.95);
-    var coinValue = new CoinMachine().getValueInCents(2.2, 1.95);
-    expect(`\$${(coinValue/100).toFixed(2)}`).equals(displayFake.CurrentMessage);
+    var coinToInsert = new Coin(2.2, 1.95);
+    vendingMachine.insertCoin(coinToInsert);
+    var coinValue = new CoinMachine().getValueInCentsByCoin(coinToInsert);
+    expect(`\$${(coinValue / 100).toFixed(2)}`).equals(displayFake.CurrentMessage);
   });
 
-  it('displays "$0.05" message', function () {    
+  it('displays "$0.05" message', function () {
     var coinToInsert = new Coin(5, 1.95);
     vendingMachine.insertCoin(coinToInsert);
     var coinValue = new CoinMachine().getValueInCentsByCoin(coinToInsert);
-    expect(`\$${(coinValue/100).toFixed(2)}`).equals(displayFake.CurrentMessage);
+    expect(`\$${(coinValue / 100).toFixed(2)}`).equals(displayFake.CurrentMessage);
   });
 });
 
@@ -30,7 +31,7 @@ enum Message {
 class Coin {
   readonly weightInGrams: number;
   readonly sizeInMillimeters: number;
-  
+
   constructor(weightInGrams: number, sizeInMillimeters: number) {
     this.weightInGrams = weightInGrams;
     this.sizeInMillimeters = sizeInMillimeters;
@@ -38,14 +39,11 @@ class Coin {
 }
 
 class CoinMachine {
-  public getValueInCents(weightInGrams: number, sizeInMillimeters: number): number {
-    if (weightInGrams == 5)
+  public getValueInCentsByCoin(coin: Coin): number {
+    if (coin.weightInGrams == 5)
       return 5;
     else
       return 10;
-  }
-  public getValueInCentsByCoin(coin: Coin): number {
-    return this.getValueInCents(coin.weightInGrams, coin.sizeInMillimeters);
   }
 }
 
@@ -61,13 +59,9 @@ class VendingMachine {
     this.display.update(Message.NoCoin);
   }
 
-  public insertCoinByDimensions(weightInGrams: number, sizeInMillimeters: number): void {
-    var coinValue = this.coinMachine.getValueInCents(weightInGrams, sizeInMillimeters);
-    this.display.update(`\$${(coinValue/100).toFixed(2)}`);
-  }
-
   public insertCoin(coin: Coin): void {
-    this.insertCoinByDimensions(coin.weightInGrams, coin.sizeInMillimeters);
+    var coinValue = this.coinMachine.getValueInCentsByCoin(coin);
+    this.display.update(`\$${(coinValue / 100).toFixed(2)}`);
   }
 }
 
