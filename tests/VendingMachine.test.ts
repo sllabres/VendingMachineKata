@@ -11,12 +11,14 @@ describe('given valid coin inserted', function () {
 
   it('displays "$0.10" message', function () {
     vendingMachine.insertCoin(2.2, 1.95);
-    expect("$0.10").equals(displayFake.CurrentMessage);
+    var coinValue = new CoinMachine().getValueInCents(2.2, 1.95);
+    expect(`\$${(coinValue/100).toFixed(2)}`).equals(displayFake.CurrentMessage);
   });
 
   it('displays "$0.05" message', function () {    
     vendingMachine.insertCoin(5, 1.95);
-    expect("$0.05").equals(displayFake.CurrentMessage);
+    var coinValue = new CoinMachine().getValueInCents(5, 1.95);
+    expect(`\$${(coinValue/100).toFixed(2)}`).equals(displayFake.CurrentMessage);
   });
 });
 
