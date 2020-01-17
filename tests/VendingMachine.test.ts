@@ -10,7 +10,7 @@ describe('given no coin inserted', function () {
 describe('given nickel inserted', function () {
   it('displays "$0.05" message', function () {
     var coinToInsert = new Disc(5, 21);
-    vendingMachine.insertCoin(coinToInsert);    
+    vendingMachine.insertCoin(coinToInsert);
     expect("$0.05").equals(displayFake.CurrentMessage);
   });
 });
@@ -18,7 +18,7 @@ describe('given nickel inserted', function () {
 describe('given dime inserted', function () {
   it('displays "$0.10" message', function () {
     var coinToInsert = new Disc(2.2, 17);
-    vendingMachine.insertCoin(coinToInsert);    
+    vendingMachine.insertCoin(coinToInsert);
     expect("$0.10").equals(displayFake.CurrentMessage);
   });
 });
@@ -26,8 +26,16 @@ describe('given dime inserted', function () {
 describe('given quarter inserted', function () {
   it('displays "$0.25" message', function () {
     var coinToInsert = new Disc(5, 24);
-    vendingMachine.insertCoin(coinToInsert);    
+    vendingMachine.insertCoin(coinToInsert);
     expect("$0.25").equals(displayFake.CurrentMessage);
+  });
+});
+
+describe('given invalid coin inserted', function () {
+  it('displays "INSERT COIN" message', function () {
+    var coinToInsert = new Disc(0, 0);
+    vendingMachine.insertCoin(coinToInsert);
+    expect(Message.NoCoin).equals(displayFake.CurrentMessage);
   });
 });
 
@@ -43,22 +51,22 @@ class DollarCurrencyFormat {
 
 class Disc {
   readonly weightInGrams: number;
-  readonly sizeInMillimeters: number;
+  readonly diameterInMillimeters: number;
 
-  constructor(weightInGrams: number, sizeInMillimeters: number) {
+  constructor(weightInGrams: number, diameterInMillimeters: number) {
     this.weightInGrams = weightInGrams;
-    this.sizeInMillimeters = sizeInMillimeters;
+    this.diameterInMillimeters = diameterInMillimeters;
   }
 }
 
 class CoinSpecification {
   readonly weightInGrams: number;
-  readonly sizeInMillimeters: number;
+  readonly diameterInMillimeters: number;
   readonly valueInCents: number;
 
-  constructor(weightInGrams: number, sizeInMillimeters: number, valueInCents: number) {
+  constructor(weightInGrams: number, diameterInMillimeters: number, valueInCents: number) {
     this.weightInGrams = weightInGrams;
-    this.sizeInMillimeters = sizeInMillimeters;
+    this.diameterInMillimeters = diameterInMillimeters;
     this.valueInCents = valueInCents;
   }
 }
@@ -66,11 +74,11 @@ class CoinSpecification {
 class CoinValuationMachine {
   readonly coinTypes: Array<CoinSpecification>;
   constructor() {
-    this.coinTypes = [ new CoinSpecification(5,24, 25), new CoinSpecification(5,21, 5), new CoinSpecification(2.2,17, 10) ];
+    this.coinTypes = [new CoinSpecification(5, 24, 25), new CoinSpecification(5, 21, 5), new CoinSpecification(2.2, 17, 10)];
   }
-  
+
   public getValueInCentsByCoin(disc: Disc): number {
-    return this.coinTypes.filter(ct => ct.sizeInMillimeters == disc.sizeInMillimeters && ct.weightInGrams == disc.weightInGrams)[0].valueInCents;
+    return this.coinTypes.filter(ct => ct.diameterInMillimeters == disc.diameterInMillimeters && ct.weightInGrams == disc.weightInGrams)[0]?.valueInCents ?? 0;
   }
 }
 
@@ -88,7 +96,10 @@ class VendingMachine {
 
   public insertCoin(disc: Disc): void {
     var coinValue = this.coinMachine.getValueInCentsByCoin(disc);
-    this.display.update(DollarCurrencyFormat.Format(coinValue));
+    if (coinValue > 0)
+      this.display.update(DollarCurrencyFormat.Format(coinValue));
+    else
+      this.display.update(Message.NoCoin);
   }
 }
 
