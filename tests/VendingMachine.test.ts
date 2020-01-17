@@ -3,7 +3,7 @@ import { expect } from "chai";
 describe('given no coin inserted', function () {
   it('displays "INSERT COIN" message', function () {
     vendingMachine.vend();
-    expect(displayFake.CurrentMessage).equals(Message.NoCoin);
+    expect(Message.NoCoin).equals(displayFake.CurrentMessage);
   });
 });
 
@@ -11,12 +11,12 @@ describe('given valid coin inserted', function () {
 
   it('displays "$0.10" message', function () {
     vendingMachine.insertCoin(2.2, 1.95);
-    expect(displayFake.CurrentMessage).equals("$0.10");
+    expect("$0.10").equals(displayFake.CurrentMessage);
   });
 
-  it('displays "$0.05" message', function () {
+  it('displays "$0.05" message', function () {    
     vendingMachine.insertCoin(5, 1.95);
-    expect(displayFake.CurrentMessage).equals("$0.05");
+    expect("$0.05").equals(displayFake.CurrentMessage);
   });
 });
 
@@ -24,10 +24,21 @@ enum Message {
   NoCoin = "INSERT COIN"
 }
 
+class CoinMachine {
+  public getValueInCents(weightInGrams: number, sizeInMillimeters: number): number {
+    if (weightInGrams == 5)
+      return 5;
+    else
+      return 10;
+  }
+}
+
 class VendingMachine {
   display: IDisplay;
+  coinMachine: CoinMachine;
   constructor(display: IDisplay) {
     this.display = display;
+    this.coinMachine = new CoinMachine();
   }
 
   public vend(): void {
@@ -35,10 +46,8 @@ class VendingMachine {
   }
 
   public insertCoin(weightInGrams: number, sizeInMillimeters: number): void {
-    if (weightInGrams == 5)
-      this.display.update("$0.05");
-    else
-      this.display.update("$0.10");
+    var coinValue = this.coinMachine.getValueInCents(weightInGrams, sizeInMillimeters);
+    this.display.update(`\$${(coinValue/100).toFixed(2)}`);
   }
 }
 
