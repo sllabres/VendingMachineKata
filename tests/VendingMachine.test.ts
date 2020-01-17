@@ -7,19 +7,20 @@ describe('given no coin inserted', function () {
   });
 });
 
-describe('given valid coin inserted', function () {
-
+describe('given dime inserted', function () {
   it('displays "$0.10" message', function () {
     var coinToInsert = new Coin(2.2, 1.95);
     vendingMachine.insertCoin(coinToInsert);
-    var coinValue = new CoinMachine().getValueInCentsByCoin(coinToInsert);
+    var coinValue = new CoinValuationMachine().getValueInCentsByCoin(coinToInsert);
     expect(DollarCurrencyFormat.Format(coinValue)).equals(displayFake.CurrentMessage);
   });
+});
 
+describe('given nickel inserted', function () {
   it('displays "$0.05" message', function () {
     var coinToInsert = new Coin(5, 1.95);
     vendingMachine.insertCoin(coinToInsert);
-    var coinValue = new CoinMachine().getValueInCentsByCoin(coinToInsert);
+    var coinValue = new CoinValuationMachine().getValueInCentsByCoin(coinToInsert);
     expect(DollarCurrencyFormat.Format(coinValue)).equals(displayFake.CurrentMessage);
   });
 });
@@ -44,7 +45,7 @@ class Coin {
   }
 }
 
-class CoinMachine {
+class CoinValuationMachine {
   public getValueInCentsByCoin(coin: Coin): number {
     if (coin.weightInGrams == 5)
       return 5;
@@ -55,10 +56,10 @@ class CoinMachine {
 
 class VendingMachine {
   display: IDisplay;
-  coinMachine: CoinMachine;
+  coinMachine: CoinValuationMachine;
   constructor(display: IDisplay) {
     this.display = display;
-    this.coinMachine = new CoinMachine();
+    this.coinMachine = new CoinValuationMachine();
   }
 
   public vend(): void {
