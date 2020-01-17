@@ -5,9 +5,13 @@ describe('no coin inserted', function () {
     var displayFake = new DisplayFake();
     var vendingMachine = new VendingMachine(displayFake);    
     vendingMachine.vend();
-    expect(displayFake.CurrentMessage).equals("INSERT COIN");
+    expect(displayFake.CurrentMessage).equals(Message.NoCoin);
   });
 });
+
+enum Message {
+  NoCoin = "INSERT COIN"
+}
 
 class VendingMachine{
   display: IDisplay;  
@@ -16,7 +20,7 @@ class VendingMachine{
   }
 
   public vend(): void {
-    this.display.update("INSERT COIN");
+    this.display.update(Message.NoCoin);
   }
 }
 
