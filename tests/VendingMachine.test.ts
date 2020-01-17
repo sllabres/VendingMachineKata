@@ -71,9 +71,22 @@ describe('given cola product selected and no coins inserted', function () {
   });
 });
 
+describe('given cola product selected and right amount inserted', function () {
+  it('displays "THANK YOU" message', function () {
+    var quarter = new Disc(5, 24);
+    vendingMachine.insertCoin(quarter);
+    vendingMachine.insertCoin(quarter);
+    vendingMachine.insertCoin(quarter);
+    vendingMachine.insertCoin(quarter);
+    vendingMachine.vend("Cola");
+    expect("THANK YOU").equals(display.CurrentMessage);
+  });
+});
+
 enum Message {
   NoCoin = "INSERT COIN",
-  Price = "PRICE"
+  Price = "PRICE",
+  Thank = "THANK YOU"
 }
 
 class DollarCurrencyFormat {
@@ -130,6 +143,9 @@ class VendingMachine {
 
   public vend(selection: string): void {
     this.display.update(Message.Price);
+
+    if(this.runningTotal > 0)
+      this.display.update(Message.Thank);
   }
 
   public getChange(): Array<Disc> {
