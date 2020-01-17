@@ -9,19 +9,28 @@ describe('given no coin inserted', function () {
 
 describe('given dime inserted', function () {
   it('displays "$0.10" message', function () {
-    var coinToInsert = new Coin(2.2, 1.95);
+    var coinToInsert = new Coin(2.2, 17);
     vendingMachine.insertCoin(coinToInsert);
     var coinValue = new CoinValuationMachine().getValueInCentsByCoin(coinToInsert);
-    expect(DollarCurrencyFormat.Format(coinValue)).equals(displayFake.CurrentMessage);
+    expect("$0.10").equals(displayFake.CurrentMessage);
   });
 });
 
 describe('given nickel inserted', function () {
   it('displays "$0.05" message', function () {
-    var coinToInsert = new Coin(5, 1.95);
+    var coinToInsert = new Coin(5, 21);
     vendingMachine.insertCoin(coinToInsert);
     var coinValue = new CoinValuationMachine().getValueInCentsByCoin(coinToInsert);
-    expect(DollarCurrencyFormat.Format(coinValue)).equals(displayFake.CurrentMessage);
+    expect("$0.05").equals(displayFake.CurrentMessage);
+  });
+});
+
+describe('given quarter inserted', function () {
+  it('displays "$0.25" message', function () {
+    var coinToInsert = new Coin(5, 24);
+    vendingMachine.insertCoin(coinToInsert);
+    var coinValue = new CoinValuationMachine().getValueInCentsByCoin(coinToInsert);
+    expect("$0.25").equals(displayFake.CurrentMessage);
   });
 });
 
@@ -30,7 +39,7 @@ enum Message {
 }
 
 class DollarCurrencyFormat {
-  public static Format(valueInCents: number) : string{
+  public static Format(valueInCents: number): string {
     return `\$${(valueInCents / 100).toFixed(2)}`;
   }
 }
@@ -47,10 +56,12 @@ class Coin {
 
 class CoinValuationMachine {
   public getValueInCentsByCoin(coin: Coin): number {
-    if (coin.weightInGrams == 5)
+    if (coin.weightInGrams == 5 && coin.sizeInMillimeters == 21)
       return 5;
-    else
+    else if (coin.weightInGrams == 2.2)
       return 10;
+    else
+      return 25;
   }
 }
 
