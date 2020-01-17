@@ -8,18 +8,14 @@ describe('given no coin inserted', function () {
 });
 
 describe('given valid coin inserted', function () {
-  it('displays "$0.05" message', function () {
-    vendingMachine.insertCoin();
-    expect(displayFake.CurrentMessage).equals("$0.05");
-  });
 
   it('displays "$0.10" message', function () {
-    vendingMachine.insertCoinByDimension(2.2, 1.95);
+    vendingMachine.insertCoin(2.2, 1.95);
     expect(displayFake.CurrentMessage).equals("$0.10");
   });
 
   it('displays "$0.05" message', function () {
-    vendingMachine.insertCoinByDimension(5, 1.95);
+    vendingMachine.insertCoin(5, 1.95);
     expect(displayFake.CurrentMessage).equals("$0.05");
   });
 });
@@ -38,16 +34,11 @@ class VendingMachine {
     this.display.update(Message.NoCoin);
   }
 
-  public insertCoin(): void {
-    this.display.update("$0.05");
-  }
-
-  public insertCoinByDimension(weightInGrams: number, sizeInMillimeters: number): void {
-
+  public insertCoin(weightInGrams: number, sizeInMillimeters: number): void {
     if (weightInGrams == 5)
       this.display.update("$0.05");
     else
-    this.display.update("$0.10");
+      this.display.update("$0.10");
   }
 }
 
