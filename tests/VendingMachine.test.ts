@@ -13,19 +13,25 @@ describe('given valid coin inserted', function () {
     var coinToInsert = new Coin(2.2, 1.95);
     vendingMachine.insertCoin(coinToInsert);
     var coinValue = new CoinMachine().getValueInCentsByCoin(coinToInsert);
-    expect(`\$${(coinValue / 100).toFixed(2)}`).equals(displayFake.CurrentMessage);
+    expect(DollarCurrencyFormat.Format(coinValue)).equals(displayFake.CurrentMessage);
   });
 
   it('displays "$0.05" message', function () {
     var coinToInsert = new Coin(5, 1.95);
     vendingMachine.insertCoin(coinToInsert);
     var coinValue = new CoinMachine().getValueInCentsByCoin(coinToInsert);
-    expect(`\$${(coinValue / 100).toFixed(2)}`).equals(displayFake.CurrentMessage);
+    expect(DollarCurrencyFormat.Format(coinValue)).equals(displayFake.CurrentMessage);
   });
 });
 
 enum Message {
   NoCoin = "INSERT COIN"
+}
+
+class DollarCurrencyFormat {
+  public static Format(valueInCents: number) : string{
+    return `\$${(valueInCents / 100).toFixed(2)}`;
+  }
 }
 
 class Coin {
@@ -61,7 +67,7 @@ class VendingMachine {
 
   public insertCoin(coin: Coin): void {
     var coinValue = this.coinMachine.getValueInCentsByCoin(coin);
-    this.display.update(`\$${(coinValue / 100).toFixed(2)}`);
+    this.display.update(DollarCurrencyFormat.Format(coinValue));
   }
 }
 
