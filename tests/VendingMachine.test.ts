@@ -1,8 +1,8 @@
 import { expect } from "chai";
 
 describe('given no coin inserted', function () {
-  it('displays "INSERT COIN" message', function () {   
-    vendingMachine.vend(); 
+  it('displays "INSERT COIN" message', function () {
+    vendingMachine.vend();
     expect(Message.NoCoin).equals(display.CurrentMessage);
   });
 });
@@ -45,11 +45,13 @@ describe('given two quarters inserted', function () {
 });
 
 describe('given invalid coin inserted', function () {
-  it('displays "INSERT COIN" message', function () {
+  it('displays "INSERT COIN" message and gives change', function () {
     var coinToInsert = new Disc(0, 0);
     vendingMachine.insertCoin(coinToInsert);
     vendingMachine.vend();
+    var change = vendingMachine.getChange();
     expect(Message.NoCoin).equals(display.CurrentMessage);
+    expect(1).equals(change.length);
   });
 });
 
@@ -100,15 +102,21 @@ class VendingMachine {
   private readonly display: IDisplay;
   private readonly coinMachine: CoinValuationMachine;
   private runningTotal: number;
+  private ejectedCoins: Array<Disc>;
 
   constructor(display: IDisplay) {
     this.display = display;
     this.coinMachine = new CoinValuationMachine();
     this.runningTotal = 0;
+    this.ejectedCoins = [];
   }
 
   public vend(): void {
-    this.runningTotal = 0;    
+    this.runningTotal = 0;
+  }
+
+  public getChange(): Array<Disc> {
+    return this.ejectedCoins;
   }
 
   public insertCoin(disc: Disc): void {
@@ -116,8 +124,10 @@ class VendingMachine {
     this.runningTotal += coinValue;
     if (coinValue > 0)
       this.display.update(DollarCurrencyFormat.Format(this.runningTotal));
-    else
+    else {
+      this.ejectedCoins.push(disc);
       this.display.update(Message.NoCoin);
+    }
   }
 }
 
