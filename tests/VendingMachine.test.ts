@@ -64,8 +64,16 @@ describe('given quarter and then invalid coin inserted', function () {
   });
 });
 
+describe('given cola product selected and no coins inserted', function () {
+  it('displays "PRICE" message', function () {
+    vendingMachine.vend("Cola");
+    expect("PRICE").equals(display.CurrentMessage);
+  });
+});
+
 enum Message {
-  NoCoin = "INSERT COIN"
+  NoCoin = "INSERT COIN",
+  Price = "PRICE"
 }
 
 class DollarCurrencyFormat {
@@ -120,8 +128,8 @@ class VendingMachine {
     this.ejectedCoins = [];
   }
 
-  public vend(): void {
-    this.runningTotal = 0;
+  public vend(selection: string): void {
+    this.display.update(Message.Price);
   }
 
   public getChange(): Array<Disc> {
@@ -135,7 +143,6 @@ class VendingMachine {
       this.display.update(DollarCurrencyFormat.Format(this.runningTotal));
     else {
       this.ejectedCoins.push(disc);
-      //this.display.update(Message.NoCoin);
     }
   }
 }
