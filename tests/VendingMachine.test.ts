@@ -10,8 +10,7 @@ describe('given no coin inserted', function () {
 describe('given nickel inserted', function () {
   it('displays "$0.05" message', function () {
     var coinToInsert = new Disc(5, 21);
-    vendingMachine.insertCoin(coinToInsert);
-    var coinValue = new CoinValuationMachine().getValueInCentsByCoin(coinToInsert);
+    vendingMachine.insertCoin(coinToInsert);    
     expect("$0.05").equals(displayFake.CurrentMessage);
   });
 });
@@ -19,8 +18,7 @@ describe('given nickel inserted', function () {
 describe('given dime inserted', function () {
   it('displays "$0.10" message', function () {
     var coinToInsert = new Disc(2.2, 17);
-    vendingMachine.insertCoin(coinToInsert);
-    var coinValue = new CoinValuationMachine().getValueInCentsByCoin(coinToInsert);
+    vendingMachine.insertCoin(coinToInsert);    
     expect("$0.10").equals(displayFake.CurrentMessage);
   });
 });
@@ -28,8 +26,7 @@ describe('given dime inserted', function () {
 describe('given quarter inserted', function () {
   it('displays "$0.25" message', function () {
     var coinToInsert = new Disc(5, 24);
-    vendingMachine.insertCoin(coinToInsert);
-    var coinValue = new CoinValuationMachine().getValueInCentsByCoin(coinToInsert);
+    vendingMachine.insertCoin(coinToInsert);    
     expect("$0.25").equals(displayFake.CurrentMessage);
   });
 });
@@ -54,7 +51,7 @@ class Disc {
   }
 }
 
-class Coin {
+class CoinSpecification {
   readonly weightInGrams: number;
   readonly sizeInMillimeters: number;
   readonly valueInCents: number;
@@ -67,13 +64,13 @@ class Coin {
 }
 
 class CoinValuationMachine {
-  readonly coinTypes: Array<Coin>;
+  readonly coinTypes: Array<CoinSpecification>;
   constructor() {
-    this.coinTypes = [ new Coin(5,24, 25), new Coin(5,21, 5), new Coin(2.2,17, 10) ];
+    this.coinTypes = [ new CoinSpecification(5,24, 25), new CoinSpecification(5,21, 5), new CoinSpecification(2.2,17, 10) ];
   }
   
-  public getValueInCentsByCoin(coin: Disc): number {
-    return this.coinTypes.filter(ct => ct.sizeInMillimeters == coin.sizeInMillimeters && ct.weightInGrams == coin.weightInGrams)[0].valueInCents;
+  public getValueInCentsByCoin(disc: Disc): number {
+    return this.coinTypes.filter(ct => ct.sizeInMillimeters == disc.sizeInMillimeters && ct.weightInGrams == disc.weightInGrams)[0].valueInCents;
   }
 }
 
@@ -89,8 +86,8 @@ class VendingMachine {
     this.display.update(Message.NoCoin);
   }
 
-  public insertCoin(coin: Disc): void {
-    var coinValue = this.coinMachine.getValueInCentsByCoin(coin);
+  public insertCoin(disc: Disc): void {
+    var coinValue = this.coinMachine.getValueInCentsByCoin(disc);
     this.display.update(DollarCurrencyFormat.Format(coinValue));
   }
 }
