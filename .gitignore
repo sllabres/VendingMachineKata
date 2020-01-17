@@ -1,0 +1,5 @@
+bin
+node_modules
+wwwroot
+obj
+out
