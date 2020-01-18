@@ -6,13 +6,7 @@ import { CoinValuationMachine } from "../src/CoinValuationMachine";
 import { ChangeMachine } from "../src/ChangeMachine";
 import { Disc } from "../src/Disc";
 import { Coin } from "../src/Coin";
-
-class DisplayFake {
-  public CurrentMessage: string = "";
-  public update(message: string): void {
-    this.CurrentMessage = message;
-  }
-}
+import { DisplayFake } from "./DisplayFake";
 
 var display: DisplayFake;
 var coinMachine: CoinValuationMachine;
