@@ -19,4 +19,18 @@ export class CoinValuationMachine {
       if (coin)
         onCoinFound(coin);
     }
-  }
+
+    public getCoinsByValue(valueInCents: number) : Array<Coin> {
+      var change: number = valueInCents;
+      var coins: Array<Coin> = [];
+      while(change != 0) {
+        var coin = this.coinTypes.filter(c => c.valueInCents <= change).sort((a,b) => {
+          return b.valueInCents - a.valueInCents;
+        })[0];
+
+        change -= coin.valueInCents;
+        coins.push(coin);
+      }
+      return coins;
+    }
+  }  
