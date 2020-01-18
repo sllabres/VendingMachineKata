@@ -35,6 +35,7 @@ export class VendingMachine {
 
     public getChange(): Array<Disc> {
         var coins = this.coinMachine.getCoinsByValue(this.runningTotal);
+        this.runningTotal = 0;        
         return this.ejectedCoins.concat(coins);
     }
 

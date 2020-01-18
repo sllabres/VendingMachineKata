@@ -31,6 +31,11 @@ describe('given chips product selected and sold out', function () {
     });
 
     vendingMachine.vend("Chips");
-    expect("SOLD OUT").equals(display.CurrentMessage);
+    expect(Message.SoldOut).equals(display.CurrentMessage);
+    vendingMachine.refreshDisplay();
+    expect("$0.50").equals(display.CurrentMessage);
+    vendingMachine.getChange();
+    vendingMachine.refreshDisplay();
+    expect(Message.NoCoin).equals(display.CurrentMessage);
   });
 });
