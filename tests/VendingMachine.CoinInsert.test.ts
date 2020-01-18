@@ -14,13 +14,13 @@ class DisplayFake {
 }
 
 var display: DisplayFake;
-var coinValuation: CoinMachine;
+var coinMachine: CoinMachine;
 var vendingMachine: VendingMachine;
 
 beforeEach(function () {
   display = new DisplayFake();
-  coinValuation = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);  
-  vendingMachine = new VendingMachine(display, coinValuation, new ProductStore([]));
+  coinMachine = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);  
+  vendingMachine = new VendingMachine(display, coinMachine, new ProductStore([]));
 });
 
 describe('given no coin inserted', function () {
@@ -32,7 +32,7 @@ describe('given no coin inserted', function () {
 
 describe('given nickel inserted', function () {
   it('displays "$0.05" message', function () {
-    coinValuation.getCoinByValue(5, (c) => {
+    coinMachine.getCoinByValue(5, (c) => {
       vendingMachine.insertCoin(c);
     });
     expect("$0.05").equals(display.CurrentMessage);
@@ -41,7 +41,7 @@ describe('given nickel inserted', function () {
 
 describe('given dime inserted', function () {
   it('displays "$0.10" message', function () {
-    coinValuation.getCoinByValue(10, (c) => {
+    coinMachine.getCoinByValue(10, (c) => {
       vendingMachine.insertCoin(c);
     });
     expect("$0.10").equals(display.CurrentMessage);
@@ -50,7 +50,7 @@ describe('given dime inserted', function () {
 
 describe('given quarter inserted', function () {
   it('displays "$0.25" message', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
     });
     expect("$0.25").equals(display.CurrentMessage);
@@ -59,7 +59,7 @@ describe('given quarter inserted', function () {
 
 describe('given two quarters inserted', function () {
   it('displays "$0.50" message', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
     });
@@ -70,11 +70,11 @@ describe('given two quarters inserted', function () {
 describe('given quarter and dime inserted', function () {
   it('displays "$0.35" message', function () {
 
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
     });
 
-    coinValuation.getCoinByValue(10, (c) => {
+    coinMachine.getCoinByValue(10, (c) => {
       vendingMachine.insertCoin(c);
     });
 
@@ -95,7 +95,7 @@ describe('given invalid coin inserted', function () {
 
 describe('given quarter and then invalid coin inserted', function () {
   it('displays "INSERT COIN" message and gives change', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
     });
 

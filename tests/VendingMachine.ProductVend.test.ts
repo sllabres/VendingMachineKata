@@ -13,15 +13,15 @@ class DisplayFake {
 }
 
 var display: DisplayFake;
-var coinValuation: CoinMachine;
+var coinMachine: CoinMachine;
 var productStore: ProductStore;
 var vendingMachine: VendingMachine;
 
 beforeEach(function () {
   display = new DisplayFake();
-  coinValuation = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);
+  coinMachine = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);
   productStore = new ProductStore([new Product("Cola", 100, 10), new Product("Chips", 50, 10), new Product("Candy", 65, 10)]);
-  vendingMachine = new VendingMachine(display, coinValuation, productStore);
+  vendingMachine = new VendingMachine(display, coinMachine, productStore);
 });
 
 describe('given cola product selected and no coins inserted', function () {
@@ -34,7 +34,7 @@ describe('given cola product selected and no coins inserted', function () {
 
 describe('given cola product selected and wrong amount inserted', function () {
   it('displays "PRICE" message', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
     });
 
@@ -45,7 +45,7 @@ describe('given cola product selected and wrong amount inserted', function () {
 
 describe('given cola product selected and right amount inserted', function () {
   it('displays "THANK YOU" message', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
@@ -59,7 +59,7 @@ describe('given cola product selected and right amount inserted', function () {
 
 describe('given cola product selected and right amount inserted vend pressed again', function () {
   it('displays "PRICE" message', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
@@ -76,7 +76,7 @@ describe('given cola product selected and right amount inserted vend pressed aga
 
 describe('given cola product selected and extra amount inserted', function () {
   it('displays "THANK YOU" message and displays amount left', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
@@ -88,14 +88,14 @@ describe('given cola product selected and extra amount inserted', function () {
     expect(Message.Thank).equals(display.CurrentMessage);
     vendingMachine.refreshDisplay();
     expect("$0.25").equals(display.CurrentMessage);
-    var changeValue = coinValuation.getValueInCents(vendingMachine.getChange()[0]);    
+    var changeValue = coinMachine.getValueInCents(vendingMachine.getChange()[0]);    
     expect(changeValue).equals(25);
   });
 });
 
 describe('given chips product selected and right amount inserted', function () {
   it('displays "THANK YOU" message', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
     });
@@ -107,7 +107,7 @@ describe('given chips product selected and right amount inserted', function () {
 
 describe('given candy product selected', function () {
   it('displays "THANK YOU" then "$0.10" message', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
@@ -122,7 +122,7 @@ describe('given candy product selected', function () {
 
 describe('given invalid product selected', function () {
   it('displays "$0.50" message', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
     });

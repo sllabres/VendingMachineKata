@@ -33,4 +33,4 @@ export class CoinMachine {
       }
       return coins;
     }
-  }  
+  }

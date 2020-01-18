@@ -13,20 +13,20 @@ class DisplayFake {
 }
 
 var display: DisplayFake;
-var coinValuation: CoinMachine;
+var coinMachine: CoinMachine;
 var productStore: ProductStore;
 var vendingMachine: VendingMachine;
 
 beforeEach(function () {
   display = new DisplayFake();
-  coinValuation = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);
+  coinMachine = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);
   productStore = new ProductStore([new Product("Cola", 100, 1), new Product("Chips", 50, 0), new Product("Candy", 50, 1)]);
-  vendingMachine = new VendingMachine(display, coinValuation, productStore);
+  vendingMachine = new VendingMachine(display, coinMachine, productStore);
 });
 
 describe('given chips product selected and sold out', function () {
   it('displays "SOLD OUT" message', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
     });
@@ -43,7 +43,7 @@ describe('given chips product selected and sold out', function () {
 
 describe('given candy product with limited stock', function () {
   it('displays "SOLD OUT" message after first purchase', function () {
-    coinValuation.getCoinByValue(25, (c) => {
+    coinMachine.getCoinByValue(25, (c) => {
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
       vendingMachine.insertCoin(c);
