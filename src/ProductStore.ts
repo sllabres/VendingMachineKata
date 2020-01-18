@@ -3,6 +3,7 @@ export class ProductStore {
     constructor(products: Array<Product>) {
         this.products = products;
     }
+
     public Purchase(sku: string, onSuccess: (p: Product) => void, onSoldOut: () => void): void {
         var product = this.products.filter(p => p.SKU == sku)[0];
         if (product && product.Quantity > 0) {
@@ -11,6 +12,10 @@ export class ProductStore {
         } else if (product?.Quantity == 0) {
             onSoldOut();
         }
+    }
+
+    public GetAllStock(): Array<Product> {
+        return this.products;
     }
 }
 

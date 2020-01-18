@@ -1,5 +1,6 @@
 import { expect } from "chai";
-import { CoinMachine, ChangeMachine } from "../src/CoinValuationMachine";
+import { CoinValuationMachine } from "../src/CoinValuationMachine";
+import { ChangeMachine } from "../src/ChangeMachine";
 import { Coin } from "../src/Coin";
 
 var coinMachine: ChangeMachine;
@@ -28,5 +29,11 @@ describe('given 65 cents inserted', function () {
     var coins = coinMachine.getCoinsByValue(65);
     expect(4).equals(coins.length);
     expect(65).equals(coins.reduce((i,c) => { return c.valueInCents + i }, 0));
+  });
+});
+
+describe('given 66 cents inserted', function () {
+  it('then can get change', function () {    
+    expect(coinMachine.canGiveChangeOnAmount(66)).equals(false);
   });
 });

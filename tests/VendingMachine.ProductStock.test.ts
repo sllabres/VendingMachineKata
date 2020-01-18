@@ -1,8 +1,9 @@
 import { expect } from "chai";
 import { VendingMachine } from "../src/VendingMachine";
 import { ProductStore, Product } from "../src/ProductStore";
-import { Message } from "../src/Message";
-import { CoinMachine, ChangeMachine } from "../src/CoinValuationMachine";
+import { Messages } from "../src/Messages";
+import { CoinValuationMachine } from "../src/CoinValuationMachine";
+import { ChangeMachine } from "../src/ChangeMachine";
 import { Coin } from "../src/Coin";
 
 class DisplayFake {
@@ -13,15 +14,16 @@ class DisplayFake {
 }
 
 var display: DisplayFake;
-var coinMachine: CoinMachine;
+var coinMachine: CoinValuationMachine;
 var productStore: ProductStore;
 var vendingMachine: VendingMachine;
 
 beforeEach(function () {
   display = new DisplayFake();
-  coinMachine = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);
+  var coins = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];
+  coinMachine = new CoinValuationMachine(coins);
   productStore = new ProductStore([new Product("Cola", 100, 1), new Product("Chips", 50, 0), new Product("Candy", 50, 1)]);
-  vendingMachine = new VendingMachine(display, coinMachine, productStore, new ChangeMachine([new Coin(5, 24, 25)]));
+  vendingMachine = new VendingMachine(display, coinMachine, productStore, new ChangeMachine(coins));
 });
 
 describe('given chips product selected and sold out', function () {
@@ -32,12 +34,12 @@ describe('given chips product selected and sold out', function () {
     });
 
     vendingMachine.vend("Chips");
-    expect(Message.SoldOut).equals(display.CurrentMessage);
+    expect(Messages.SoldOut).equals(display.CurrentMessage);
     vendingMachine.refreshDisplay();
     expect("$0.50").equals(display.CurrentMessage);
     vendingMachine.getChange();
     vendingMachine.refreshDisplay();
-    expect(Message.InsertCoin).equals(display.CurrentMessage);
+    expect(Messages.InsertCoin).equals(display.CurrentMessage);
   });
 });
 
@@ -52,6 +54,6 @@ describe('given candy product with limited stock', function () {
 
     vendingMachine.vend("Candy");
     vendingMachine.vend("Candy");
-    expect(display.CurrentMessage).equals(Message.SoldOut);
+    expect(display.CurrentMessage).equals(Messages.SoldOut);
   });
 });

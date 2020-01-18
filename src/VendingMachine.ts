@@ -1,19 +1,20 @@
 import { IDisplay } from "./IDisplay";
 import { Disc } from "./Disc";
-import { Message } from "./Message";
-import { CoinMachine, ChangeMachine } from "./CoinValuationMachine";
+import { Messages } from "./Messages";
+import { CoinValuationMachine } from "./CoinValuationMachine";
+import { ChangeMachine } from "./ChangeMachine";
 import { DollarCurrencyFormat } from "./DollarCurrencyFormat";
 import { ProductStore, Product } from "./ProductStore";
 
 export class VendingMachine {
     private readonly display: IDisplay;
-    private readonly coinMachine: CoinMachine;
+    private readonly coinMachine: CoinValuationMachine;
     private readonly productStore: ProductStore;
     private readonly changeMachine: ChangeMachine;
     private runningTotal: number;
     private ejectedCoins: Array<Disc>;    
 
-    constructor(display: IDisplay, coinValuation: CoinMachine, productStore: ProductStore, changeMachine: ChangeMachine) {
+    constructor(display: IDisplay, coinValuation: CoinValuationMachine, productStore: ProductStore, changeMachine: ChangeMachine) {
         this.changeMachine = changeMachine;
         this.display = display;
         this.coinMachine = coinValuation;
@@ -25,13 +26,13 @@ export class VendingMachine {
     public vend(selection: string): void {
         this.productStore.Purchase(selection, (p: Product) => {
             if (this.runningTotal >= p.Value) {
-                this.display.update(Message.Thank);
+                this.display.update(Messages.Thank);
                 this.runningTotal -= p.Value;
             } else {
-                this.display.update(Message.Price);
+                this.display.update(Messages.Price);
             }
         }, () => {
-            this.display.update(Message.SoldOut);
+            this.display.update(Messages.SoldOut);
         });
     }
 
@@ -42,8 +43,8 @@ export class VendingMachine {
     }
 
     public refreshDisplay(): void {
-        if (this.runningTotal == 0) {
-            this.display.update(Message.InsertCoin);
+        if (this.runningTotal == 0) {            
+           this.display.update(this.productStore.GetAllStock().every(p => this.changeMachine.canGiveChangeOnAmount(p.Value)) ? Messages.InsertCoin : Messages.ExactChange);
         } else {
             this.display.update(DollarCurrencyFormat.Format(this.runningTotal));
         }

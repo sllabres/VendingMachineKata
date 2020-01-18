@@ -1,7 +1,7 @@
 import { Coin } from "./Coin";
 import { Disc } from "./Disc";
 
-export class CoinMachine {
+export class CoinValuationMachine {
     readonly coinTypes: Array<Coin>;
     constructor(acceptedCoins: Array<Coin>) {
       this.coinTypes = acceptedCoins;
@@ -21,23 +21,3 @@ export class CoinMachine {
     }    
   }
 
-  export class ChangeMachine {
-    readonly coinStock: Array<Coin>;
-    constructor(coins: Array<Coin>) {
-      this.coinStock = coins;
-    }
-
-    public getCoinsByValue(valueInCents: number) : Array<Coin> {
-      var change: number = valueInCents;
-      var coins: Array<Coin> = [];
-      while(change != 0) {
-        var coin = this.coinStock.filter(c => c.valueInCents <= change).sort((a,b) => {
-          return b.valueInCents - a.valueInCents;
-        })[0];
-
-        change -= coin.valueInCents;
-        coins.push(coin);
-      }
-      return coins;
-    }
-  }
