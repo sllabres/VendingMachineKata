@@ -115,22 +115,19 @@ class Disc {
   }
 }
 
-class CoinSpecification {
-  readonly weightInGrams: number;
-  readonly diameterInMillimeters: number;
+class Coin extends Disc {
   readonly valueInCents: number;
 
   constructor(weightInGrams: number, diameterInMillimeters: number, valueInCents: number) {
-    this.weightInGrams = weightInGrams;
-    this.diameterInMillimeters = diameterInMillimeters;
+    super(weightInGrams, diameterInMillimeters);    
     this.valueInCents = valueInCents;
   }
 }
 
 class CoinValuationMachine {
-  readonly coinTypes: Array<CoinSpecification>;
+  readonly coinTypes: Array<Coin>;
   constructor() {
-    this.coinTypes = [new CoinSpecification(5, 24, 25), new CoinSpecification(5, 21, 5), new CoinSpecification(2.2, 17, 10)];
+    this.coinTypes = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];
   }
 
   public getValueInCentsByCoin(disc: Disc): number {
