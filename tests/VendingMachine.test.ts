@@ -7,6 +7,7 @@ beforeEach(function () {
 
 describe('given no coin inserted', function () {
   it('displays "INSERT COIN" message', function () {
+    vendingMachine.refreshDisplay();
     expect(Message.NoCoin).equals(display.CurrentMessage);
   });
 });
@@ -68,6 +69,7 @@ describe('given invalid coin inserted', function () {
     var coinToInsert = new Disc(0, 0);
     vendingMachine.insertCoin(coinToInsert);
     var change = vendingMachine.getChange();
+    vendingMachine.refreshDisplay();
     expect(Message.NoCoin).equals(display.CurrentMessage);
     expect(1).equals(change.length);
   });
@@ -130,7 +132,7 @@ describe('given cola product selected and right amount inserted vend pressed aga
 
     vendingMachine.vend("Cola");
     vendingMachine.vend("Cola");
-    expect("PRICE").equals(display.CurrentMessage);
+    expect(Message.Price).equals(display.CurrentMessage);
   });
 });
 
@@ -171,7 +173,7 @@ class CoinValuationMachine {
     this.coinTypes = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];
   }
 
-  public getValueInCents(disc: Disc, onFound: (v: number) => void, onInvalid: (d: Disc) => void = () => { }): void {
+  public getValueInCents(disc: Disc, onFound: (v: number) => void, onInvalid: (d: Disc) => void): void {
     var value = this.coinTypes.filter(ct => ct.diameterInMillimeters == disc.diameterInMillimeters && ct.weightInGrams == disc.weightInGrams)[0]?.valueInCents ?? 0;
     if (value > 0)
       onFound(value)
@@ -200,16 +202,22 @@ class VendingMachine {
   }
 
   public vend(selection: string): void {
-    this.display.update(Message.Price);
-
     if (this.runningTotal == 100)
       this.display.update(Message.Thank);
+    else
+      this.display.update(Message.Price);
 
     this.runningTotal = 0;
   }
 
   public getChange(): Array<Disc> {
     return this.ejectedCoins;
+  }
+
+  public refreshDisplay(): void {
+    if (this.runningTotal == 0) {
+      this.display.update(Message.NoCoin);
+    }
   }
 
   public insertCoin(disc: Disc): void {
@@ -227,7 +235,7 @@ interface IDisplay {
 }
 
 class DisplayFake {
-  public CurrentMessage: string = Message.NoCoin;
+  public CurrentMessage: string = "";
   public update(message: string): void {
     this.CurrentMessage = message;
   }
