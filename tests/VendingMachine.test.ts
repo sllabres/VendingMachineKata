@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { VendingMachine } from "../src/VendingMachine";
 
 beforeEach(function () {
   display = new DisplayFake();
@@ -133,22 +134,41 @@ describe('given cola product selected and right amount inserted vend pressed aga
     vendingMachine.vend("Cola");
     vendingMachine.vend("Cola");
     expect(Message.Price).equals(display.CurrentMessage);
+    vendingMachine.refreshDisplay();
+    expect(Message.NoCoin).equals(display.CurrentMessage);
   });
 });
 
-enum Message {
+describe('given cola product selected and extra amount inserted', function () {
+  it('displays "THANK YOU" message and displays amount left', function () {
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+    });
+
+    vendingMachine.vend("Cola");
+    expect(Message.Thank).equals(display.CurrentMessage);
+    vendingMachine.refreshDisplay();
+    expect("$0.25").equals(display.CurrentMessage);
+  });
+});
+
+export enum Message {
   NoCoin = "INSERT COIN",
   Price = "PRICE",
   Thank = "THANK YOU"
 }
 
-class DollarCurrencyFormat {
+export class DollarCurrencyFormat {
   public static Format(valueInCents: number): string {
     return `\$${(valueInCents / 100).toFixed(2)}`;
   }
 }
 
-class Disc {
+export class Disc {
   readonly weightInGrams: number;
   readonly diameterInMillimeters: number;
 
@@ -167,18 +187,17 @@ class Coin extends Disc {
   }
 }
 
-class CoinValuationMachine {
+export class CoinValuationMachine {
   readonly coinTypes: Array<Coin>;
   constructor() {
     this.coinTypes = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];
   }
 
-  public getValueInCents(disc: Disc, onFound: (v: number) => void, onInvalid: (d: Disc) => void): void {
+  public getValueInCents(disc: Disc, onInvalid: (d: Disc) => void = (d) => {}): number {
     var value = this.coinTypes.filter(ct => ct.diameterInMillimeters == disc.diameterInMillimeters && ct.weightInGrams == disc.weightInGrams)[0]?.valueInCents ?? 0;
-    if (value > 0)
-      onFound(value)
-    else
+    if (value == 0)
       onInvalid(disc);
+    return value;
   }
 
   public getCoinByValue(valueInCents: number, onCoinFound: (c: Coin) => void): void {
@@ -188,49 +207,7 @@ class CoinValuationMachine {
   }
 }
 
-class VendingMachine {
-  private readonly display: IDisplay;
-  private readonly coinValuation: CoinValuationMachine;
-  private runningTotal: number;
-  private ejectedCoins: Array<Disc>;
-
-  constructor(display: IDisplay, coinValuation: CoinValuationMachine) {
-    this.display = display;
-    this.coinValuation = coinValuation;
-    this.runningTotal = 0;
-    this.ejectedCoins = [];
-  }
-
-  public vend(selection: string): void {
-    if (this.runningTotal == 100)
-      this.display.update(Message.Thank);
-    else
-      this.display.update(Message.Price);
-
-    this.runningTotal = 0;
-  }
-
-  public getChange(): Array<Disc> {
-    return this.ejectedCoins;
-  }
-
-  public refreshDisplay(): void {
-    if (this.runningTotal == 0) {
-      this.display.update(Message.NoCoin);
-    }
-  }
-
-  public insertCoin(disc: Disc): void {
-    this.coinValuation.getValueInCents(disc, (v) => {
-      this.runningTotal += v;
-      this.display.update(DollarCurrencyFormat.Format(this.runningTotal));
-    }, (d) => {
-      this.ejectedCoins.push(d);
-    });
-  }
-}
-
-interface IDisplay {
+export interface IDisplay {
   update(message: string): void;
 }
 
