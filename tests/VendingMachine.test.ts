@@ -19,7 +19,7 @@ var vendingMachine: VendingMachine;
 beforeEach(function () {
   display = new DisplayFake();
   coinValuation = new CoinValuationMachine();
-  productStore = new ProductStore([new Product("Cola", 100), new Product("Chips", 50)]);
+  productStore = new ProductStore([new Product("Cola", 100), new Product("Chips", 50), new Product("Candy", 65)]);
   vendingMachine = new VendingMachine(display, coinValuation, productStore);
 });
 
@@ -109,7 +109,7 @@ describe('given quarter and then invalid coin inserted', function () {
 describe('given cola product selected and no coins inserted', function () {
   it('displays "PRICE" message', function () {
     vendingMachine.vend("Cola");
-    expect("PRICE").equals(display.CurrentMessage);
+    expect(Message.Price).equals(display.CurrentMessage);
   });
 });
 
@@ -121,7 +121,7 @@ describe('given cola product selected and wrong amount inserted', function () {
     });
 
     vendingMachine.vend("Cola");
-    expect("PRICE").equals(display.CurrentMessage);
+    expect(Message.Price).equals(display.CurrentMessage);
   });
 });
 
@@ -135,7 +135,7 @@ describe('given cola product selected and right amount inserted', function () {
     });
 
     vendingMachine.vend("Cola");
-    expect("THANK YOU").equals(display.CurrentMessage);
+    expect(Message.Thank).equals(display.CurrentMessage);
   });
 });
 
@@ -181,7 +181,22 @@ describe('given chips product selected and right amount inserted', function () {
     });
 
     vendingMachine.vend("Chips");
-    expect("THANK YOU").equals(display.CurrentMessage);
+    expect(Message.Thank).equals(display.CurrentMessage);
+  });
+});
+
+describe('given candy product selected', function () {
+  it('displays "THANK YOU" then "$0.10" message', function () {
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+    });
+
+    vendingMachine.vend("Candy");
+    expect(Message.Thank).equals(display.CurrentMessage);
+    vendingMachine.refreshDisplay();
+    expect("$0.10").equals(display.CurrentMessage);
   });
 });
 
