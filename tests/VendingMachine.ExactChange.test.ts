@@ -19,8 +19,11 @@ var coinMachine: CoinValuationMachine;
 var vendingMachine: VendingMachine;
 
 beforeEach(function () {
+  var quater: Coin = new Coin(5, 24, 25);
+  var dime: Coin = new Coin(5, 21, 10);
+  var nickel: Coin = new Coin(2.2, 17, 5);
   display = new DisplayFake();
-  coinMachine = new CoinValuationMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);  
+  coinMachine = new CoinValuationMachine([quater, nickel, dime]);
   vendingMachine = new VendingMachine(display, coinMachine, new ProductStore([new Product("ABC", 30, 1)]), new ChangeMachine([new Coin(5, 24, 25)]));
 });
 

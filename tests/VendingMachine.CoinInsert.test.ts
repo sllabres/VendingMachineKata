@@ -17,17 +17,14 @@ class DisplayFake {
 var display: DisplayFake;
 var coinMachine: CoinValuationMachine;
 var vendingMachine: VendingMachine;
-var quater: Disc;
-var dime: Disc;
-var nickel: Disc;
+var quater: Coin = new Coin(5, 24, 25);
+var dime: Coin = new Coin(5, 21, 10);
+var nickel: Coin = new Coin(2.2, 17, 5);
 
 beforeEach(function () {
   display = new DisplayFake();
-  coinMachine = new CoinValuationMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);
-  quater = coinMachine.getCoinByValue(25);
-  dime = coinMachine.getCoinByValue(10);
-  nickel = coinMachine.getCoinByValue(5);
-  vendingMachine = new VendingMachine(display, coinMachine, new ProductStore([]), new ChangeMachine([new Coin(5, 24, 25)]));
+  coinMachine = new CoinValuationMachine([quater, dime, nickel]);  
+  vendingMachine = new VendingMachine(display, coinMachine, new ProductStore([]), new ChangeMachine([quater]));
 });
 
 describe('given no coin inserted', function () {

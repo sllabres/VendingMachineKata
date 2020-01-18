@@ -18,13 +18,14 @@ var display: DisplayFake;
 var coinMachine: CoinValuationMachine;
 var productStore: ProductStore;
 var vendingMachine: VendingMachine;
-var quater: Disc;
+var quater: Coin = new Coin(5, 24, 25);
+var dime: Coin = new Coin(5, 21, 10);
+var nickel: Coin = new Coin(2.2, 17, 5);
 
 beforeEach(function () {
   display = new DisplayFake();
-  var coins = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];
-  coinMachine = new CoinValuationMachine(coins);
-  quater = coinMachine.getCoinByValue(25);
+  var coins = [quater, nickel, dime];
+  coinMachine = new CoinValuationMachine(coins);  
   productStore = new ProductStore([new Product("Cola", 100, 10), new Product("Chips", 50, 10), new Product("Candy", 65, 10)]);
   vendingMachine = new VendingMachine(display, coinMachine, productStore, new ChangeMachine(coins));
 });
