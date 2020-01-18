@@ -66,7 +66,6 @@ describe('given two quarters inserted', function () {
 
 describe('given quarter and dime inserted', function () {
   it('displays "$0.35" message', function () {
-
     vendingMachine.insertCoin(quater);
     vendingMachine.insertCoin(dime);
     expect("$0.35").equals(display.CurrentMessage);
