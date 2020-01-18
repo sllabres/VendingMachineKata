@@ -7,25 +7,26 @@ import { DollarCurrencyFormat } from "./DollarCurrencyFormat";
 export class VendingMachine {
     private readonly display: IDisplay;
     private readonly coinValuation: CoinValuationMachine;
+    private readonly productStore: ProductStore;
     private runningTotal: number;
     private ejectedCoins: Array<Disc>;
-    constructor(display: IDisplay, coinValuation: CoinValuationMachine) {
+
+    constructor(display: IDisplay, coinValuation: CoinValuationMachine, productStore: ProductStore) {
         this.display = display;
         this.coinValuation = coinValuation;
         this.runningTotal = 0;
         this.ejectedCoins = [];
+        this.productStore = productStore;
     }
     public vend(selection: string): void {
-        if (this.runningTotal >= 100) {
-            this.display.update(Message.Thank);
-            this.runningTotal -= 100;
-        }
-        else if (this.runningTotal >= 50) {
-            this.display.update(Message.Thank);
-            this.runningTotal -= 50;
-        }
-        else
-            this.display.update(Message.Price);        
+        this.productStore.Purchase(selection, (p: Product) => {
+            if (this.runningTotal >= p.Value) {
+                this.display.update(Message.Thank);
+                this.runningTotal -= p.Value;
+            } else {
+                this.display.update(Message.Price);
+            }
+        });
     }
     public getChange(): Array<Disc> {
         return this.ejectedCoins;
@@ -42,7 +43,28 @@ export class VendingMachine {
             this.ejectedCoins.push(d);
         });
         this.runningTotal += value;
-        this.refreshDisplay();        
+        this.refreshDisplay();
     }
 }
 
+export class Product {
+    public readonly SKU: string;
+    public readonly Value: number;
+    constructor(SKU: string, value: number) {
+        this.SKU = SKU;
+        this.Value = value;
+    }
+}
+
+export class ProductStore {
+    private readonly products: Array<Product>;
+    constructor(products: Array<Product>) {
+        this.products = products;
+    }
+
+    public Purchase(sku: string, onSuccess: (p: Product) => void): void {
+        var product = this.products.filter(p => p.SKU == sku)[0];
+        if (product)
+            onSuccess(product);
+    }
+}

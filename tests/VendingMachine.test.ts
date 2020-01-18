@@ -1,12 +1,24 @@
 import { expect } from "chai";
-import { VendingMachine } from "../src/VendingMachine";
+import { VendingMachine, ProductStore, Product } from "../src/VendingMachine";
 import { Message } from "../src/Message";
 import { CoinValuationMachine } from "../src/CoinValuationMachine";
 import { Disc } from "../src/Disc";
 
+class DisplayFake {
+  public CurrentMessage: string = "";
+  public update(message: string): void {
+    this.CurrentMessage = message;
+  }
+}
+
+var display = new DisplayFake();
+var coinValuation = new CoinValuationMachine();
+var productStore = new ProductStore([new Product("Cola", 100), new Product("Chips", 50)]);
+var vendingMachine = new VendingMachine(display, coinValuation, productStore);
+
 beforeEach(function () {
   display = new DisplayFake();
-  vendingMachine = new VendingMachine(display, coinValuation);
+  vendingMachine = new VendingMachine(display, coinValuation,productStore);
 });
 
 describe('given no coin inserted', function () {
@@ -170,14 +182,3 @@ describe('given chips product selected and right amount inserted', function () {
     expect("THANK YOU").equals(display.CurrentMessage);
   });
 });
-
-class DisplayFake {
-  public CurrentMessage: string = "";
-  public update(message: string): void {
-    this.CurrentMessage = message;
-  }
-}
-
-var display = new DisplayFake();
-var coinValuation = new CoinValuationMachine();
-var vendingMachine = new VendingMachine(display, coinValuation);
