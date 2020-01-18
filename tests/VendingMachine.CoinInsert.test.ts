@@ -4,6 +4,7 @@ import { ProductStore, Product } from "../src/ProductStore";
 import { Message } from "../src/Message";
 import { CoinMachine } from "../src/CoinValuationMachine";
 import { Disc } from "../src/Disc";
+import { Coin } from "../src/Coin";
 
 class DisplayFake {
   public CurrentMessage: string = "";
@@ -18,14 +19,14 @@ var vendingMachine: VendingMachine;
 
 beforeEach(function () {
   display = new DisplayFake();
-  coinValuation = new CoinMachine();  
+  coinValuation = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);  
   vendingMachine = new VendingMachine(display, coinValuation, new ProductStore([]));
 });
 
 describe('given no coin inserted', function () {
   it('displays "INSERT COIN" message', function () {
     vendingMachine.refreshDisplay();
-    expect(Message.NoCoin).equals(display.CurrentMessage);
+    expect(Message.InsertCoin).equals(display.CurrentMessage);
   });
 });
 
@@ -87,7 +88,7 @@ describe('given invalid coin inserted', function () {
     vendingMachine.insertCoin(coinToInsert);
     var change = vendingMachine.getChange();
     vendingMachine.refreshDisplay();
-    expect(Message.NoCoin).equals(display.CurrentMessage);
+    expect(Message.InsertCoin).equals(display.CurrentMessage);
     expect(1).equals(change.length);
   });
 });

@@ -41,11 +41,12 @@ export class VendingMachine {
 
     public refreshDisplay(): void {
         if (this.runningTotal == 0) {
-            this.display.update(Message.NoCoin);
+            this.display.update(Message.InsertCoin);
         } else {
             this.display.update(DollarCurrencyFormat.Format(this.runningTotal));
         }
     }
+
     public insertCoin(disc: Disc): void {
         var value = this.coinMachine.getValueInCents(disc, (d) => {
             this.ejectedCoins.push(d);
