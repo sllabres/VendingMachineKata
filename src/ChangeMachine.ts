@@ -5,24 +5,19 @@ export class ChangeMachine {
     this.coinStock = coins;
   }
   public getCoinsByValue(valueInCents: number): Array<Coin> {
-    var change: number = valueInCents;
     var coins: Array<Coin> = [];
-    while (change > 0) {
-      var coin = this.coinStock.filter(c => c.valueInCents <= change).sort((a, b) => {
-        return b.valueInCents - a.valueInCents;
-      })[0];
-      
-      if(coin) {
-        change -= coin.valueInCents;
-        coins.push(coin);
-      } else { 
-          change = 0;
+    var changeRemaining: number = valueInCents;
+    this.coinStock.sort((a, b) => b.valueInCents - a.valueInCents).forEach(c => {
+      var quotient = Math.floor(changeRemaining / c.valueInCents);      
+      for (let i = 0; i < quotient; i++) {
+        changeRemaining -= c.valueInCents;
+        coins.push(c);
       }
-    }
+    });
     return coins;
   }
 
   public canGiveChangeOnAmount(valueInCents: number): boolean {
-    return this.getCoinsByValue(valueInCents).reduce((a,b) => a + b.valueInCents, 0) == valueInCents;      
+    return this.getCoinsByValue(valueInCents).reduce((a, b) => a + b.valueInCents, 0) == valueInCents;
   }
 }
