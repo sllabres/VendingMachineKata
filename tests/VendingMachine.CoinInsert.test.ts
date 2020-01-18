@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { VendingMachine } from "../src/VendingMachine";
 import { ProductStore, Product } from "../src/ProductStore";
 import { Message } from "../src/Message";
-import { CoinMachine } from "../src/CoinValuationMachine";
+import { CoinMachine, ChangeMachine } from "../src/CoinValuationMachine";
 import { Disc } from "../src/Disc";
 import { Coin } from "../src/Coin";
 
@@ -20,7 +20,7 @@ var vendingMachine: VendingMachine;
 beforeEach(function () {
   display = new DisplayFake();
   coinMachine = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);  
-  vendingMachine = new VendingMachine(display, coinMachine, new ProductStore([]));
+  vendingMachine = new VendingMachine(display, coinMachine, new ProductStore([]), new ChangeMachine([new Coin(5, 24, 25)]));
 });
 
 describe('given no coin inserted', function () {

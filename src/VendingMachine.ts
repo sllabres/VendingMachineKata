@@ -1,7 +1,7 @@
 import { IDisplay } from "./IDisplay";
 import { Disc } from "./Disc";
 import { Message } from "./Message";
-import { CoinMachine } from "./CoinValuationMachine";
+import { CoinMachine, ChangeMachine } from "./CoinValuationMachine";
 import { DollarCurrencyFormat } from "./DollarCurrencyFormat";
 import { ProductStore, Product } from "./ProductStore";
 
@@ -9,10 +9,12 @@ export class VendingMachine {
     private readonly display: IDisplay;
     private readonly coinMachine: CoinMachine;
     private readonly productStore: ProductStore;
+    private readonly changeMachine: ChangeMachine;
     private runningTotal: number;
-    private ejectedCoins: Array<Disc>;
+    private ejectedCoins: Array<Disc>;    
 
-    constructor(display: IDisplay, coinValuation: CoinMachine, productStore: ProductStore) {
+    constructor(display: IDisplay, coinValuation: CoinMachine, productStore: ProductStore, changeMachine: ChangeMachine) {
+        this.changeMachine = changeMachine;
         this.display = display;
         this.coinMachine = coinValuation;
         this.runningTotal = 0;
@@ -34,7 +36,7 @@ export class VendingMachine {
     }
 
     public getChange(): Array<Disc> {
-        var coins = this.coinMachine.getCoinsByValue(this.runningTotal);
+        var coins = this.changeMachine.getCoinsByValue(this.runningTotal);
         this.runningTotal = 0;        
         return this.ejectedCoins.concat(coins);
     }

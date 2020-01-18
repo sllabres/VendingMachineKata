@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { VendingMachine } from "../src/VendingMachine";
 import { ProductStore, Product } from "../src/ProductStore";
 import { Message } from "../src/Message";
-import { CoinMachine } from "../src/CoinValuationMachine";
+import { CoinMachine, ChangeMachine } from "../src/CoinValuationMachine";
 import { Coin } from "../src/Coin";
 
 class DisplayFake {
@@ -21,7 +21,7 @@ beforeEach(function () {
   display = new DisplayFake();
   coinMachine = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);
   productStore = new ProductStore([new Product("Cola", 100, 1), new Product("Chips", 50, 0), new Product("Candy", 50, 1)]);
-  vendingMachine = new VendingMachine(display, coinMachine, productStore);
+  vendingMachine = new VendingMachine(display, coinMachine, productStore, new ChangeMachine([new Coin(5, 24, 25)]));
 });
 
 describe('given chips product selected and sold out', function () {
@@ -50,8 +50,8 @@ describe('given candy product with limited stock', function () {
       vendingMachine.insertCoin(c);
     });
 
-    vendingMachine.vend("Candy");   
-    vendingMachine.vend("Candy");    
+    vendingMachine.vend("Candy");
+    vendingMachine.vend("Candy");
     expect(display.CurrentMessage).equals(Message.SoldOut);
   });
 });

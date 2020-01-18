@@ -18,13 +18,20 @@ export class CoinMachine {
       var coin = this.coinTypes.filter(ct => ct.valueInCents == valueInCents)[0];
       if (coin)
         onCoinFound(coin);
+    }    
+  }
+
+  export class ChangeMachine {
+    readonly coinStock: Array<Coin>;
+    constructor(coins: Array<Coin>) {
+      this.coinStock = coins;
     }
 
     public getCoinsByValue(valueInCents: number) : Array<Coin> {
       var change: number = valueInCents;
       var coins: Array<Coin> = [];
       while(change != 0) {
-        var coin = this.coinTypes.filter(c => c.valueInCents <= change).sort((a,b) => {
+        var coin = this.coinStock.filter(c => c.valueInCents <= change).sort((a,b) => {
           return b.valueInCents - a.valueInCents;
         })[0];
 

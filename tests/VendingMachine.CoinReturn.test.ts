@@ -1,18 +1,11 @@
 import { expect } from "chai";
-import { CoinMachine } from "../src/CoinValuationMachine";
+import { CoinMachine, ChangeMachine } from "../src/CoinValuationMachine";
 import { Coin } from "../src/Coin";
 
-class DisplayFake {
-  public CurrentMessage: string = "";
-  public update(message: string): void {
-    this.CurrentMessage = message;
-  }
-}
-
-var coinMachine: CoinMachine;
+var coinMachine: ChangeMachine;
 
 beforeEach(function () {
-  coinMachine = new CoinMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);  
+  coinMachine = new ChangeMachine([new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)]);  
 });
 
 describe('given 25 cents inserted', function () {
