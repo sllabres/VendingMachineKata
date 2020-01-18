@@ -1,2 +1,3 @@
 # Vending Machine Kata
-Command - NPM RUN TEST
+Tests - NPM RUN TEST
+Coverage - NPM RUN COVERAGE
