@@ -11,14 +11,16 @@ class DisplayFake {
   }
 }
 
-var display = new DisplayFake();
-var coinValuation = new CoinValuationMachine();
-var productStore = new ProductStore([new Product("Cola", 100), new Product("Chips", 50)]);
-var vendingMachine = new VendingMachine(display, coinValuation, productStore);
+var display: DisplayFake;
+var coinValuation: CoinValuationMachine;
+var productStore: ProductStore;
+var vendingMachine: VendingMachine;
 
 beforeEach(function () {
   display = new DisplayFake();
-  vendingMachine = new VendingMachine(display, coinValuation,productStore);
+  coinValuation = new CoinValuationMachine();
+  productStore = new ProductStore([new Product("Cola", 100), new Product("Chips", 50)]);
+  vendingMachine = new VendingMachine(display, coinValuation, productStore);
 });
 
 describe('given no coin inserted', function () {
