@@ -31,25 +31,34 @@ describe('given dime inserted', function () {
 
 describe('given quarter inserted', function () {
   it('displays "$0.25" message', function () {
-    var coinToInsert = new Disc(5, 24);
-    vendingMachine.insertCoin(coinToInsert);
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+    });
     expect("$0.25").equals(display.CurrentMessage);
   });
 });
 
 describe('given two quarters inserted', function () {
   it('displays "$0.50" message', function () {
-    var coinToInsert = new Disc(5, 24);
-    vendingMachine.insertCoin(coinToInsert);
-    vendingMachine.insertCoin(coinToInsert);
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+    });
     expect("$0.50").equals(display.CurrentMessage);
   });
 });
 
 describe('given quarter and dime inserted', function () {
   it('displays "$0.35" message', function () {
-    vendingMachine.insertCoin(new Disc(5, 24));
-    vendingMachine.insertCoin(new Disc(2.2, 17));
+
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+    });
+
+    coinValuation.getCoinByValue(10, (c) => {
+      vendingMachine.insertCoin(c);
+    });
+
     expect("$0.35").equals(display.CurrentMessage);
   });
 });
@@ -66,7 +75,10 @@ describe('given invalid coin inserted', function () {
 
 describe('given quarter and then invalid coin inserted', function () {
   it('displays "INSERT COIN" message and gives change', function () {
-    vendingMachine.insertCoin(new Disc(5, 24));
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+    });
+
     vendingMachine.insertCoin(new Disc(0, 0));
     var change = vendingMachine.getChange();
     expect("$0.25").equals(display.CurrentMessage);
@@ -84,8 +96,10 @@ describe('given cola product selected and no coins inserted', function () {
 
 describe('given cola product selected and wrong amount inserted', function () {
   it('displays "PRICE" message', function () {
-    var quarter = new Disc(5, 24);
-    vendingMachine.insertCoin(quarter);
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+    });
+
     vendingMachine.vend("Cola");
     expect("PRICE").equals(display.CurrentMessage);
   });
@@ -93,13 +107,30 @@ describe('given cola product selected and wrong amount inserted', function () {
 
 describe('given cola product selected and right amount inserted', function () {
   it('displays "THANK YOU" message', function () {
-    var quarter = new Disc(5, 24);
-    vendingMachine.insertCoin(quarter);
-    vendingMachine.insertCoin(quarter);
-    vendingMachine.insertCoin(quarter);
-    vendingMachine.insertCoin(quarter);
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+    });
+
     vendingMachine.vend("Cola");
     expect("THANK YOU").equals(display.CurrentMessage);
+  });
+});
+
+describe('given cola product selected and right amount inserted vend pressed again', function () {
+  it('displays "PRICE" message', function () {
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+    });
+
+    vendingMachine.vend("Cola");
+    vendingMachine.vend("Cola");
+    expect("PRICE").equals(display.CurrentMessage);
   });
 });
 
@@ -140,7 +171,7 @@ class CoinValuationMachine {
     this.coinTypes = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];
   }
 
-  public getValueInCents(disc: Disc, onFound: (v: number) => void, onInvalid: (d: Disc) => void): void {
+  public getValueInCents(disc: Disc, onFound: (v: number) => void, onInvalid: (d: Disc) => void = () => { }): void {
     var value = this.coinTypes.filter(ct => ct.diameterInMillimeters == disc.diameterInMillimeters && ct.weightInGrams == disc.weightInGrams)[0]?.valueInCents ?? 0;
     if (value > 0)
       onFound(value)
@@ -173,6 +204,8 @@ class VendingMachine {
 
     if (this.runningTotal == 100)
       this.display.update(Message.Thank);
+
+    this.runningTotal = 0;
   }
 
   public getChange(): Array<Disc> {
