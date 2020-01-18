@@ -1,5 +1,8 @@
 import { expect } from "chai";
 import { VendingMachine } from "../src/VendingMachine";
+import { Message } from "../src/Message";
+import { CoinValuationMachine } from "../src/CoinValuationMachine";
+import { Disc } from "../src/Disc";
 
 beforeEach(function () {
   display = new DisplayFake();
@@ -156,60 +159,17 @@ describe('given cola product selected and extra amount inserted', function () {
   });
 });
 
-export enum Message {
-  NoCoin = "INSERT COIN",
-  Price = "PRICE",
-  Thank = "THANK YOU"
-}
+describe('given chips product selected and right amount inserted', function () {
+  it('displays "THANK YOU" message', function () {
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+    });
 
-export class DollarCurrencyFormat {
-  public static Format(valueInCents: number): string {
-    return `\$${(valueInCents / 100).toFixed(2)}`;
-  }
-}
-
-export class Disc {
-  readonly weightInGrams: number;
-  readonly diameterInMillimeters: number;
-
-  constructor(weightInGrams: number, diameterInMillimeters: number) {
-    this.weightInGrams = weightInGrams;
-    this.diameterInMillimeters = diameterInMillimeters;
-  }
-}
-
-class Coin extends Disc {
-  readonly valueInCents: number;
-
-  constructor(weightInGrams: number, diameterInMillimeters: number, valueInCents: number) {
-    super(weightInGrams, diameterInMillimeters);
-    this.valueInCents = valueInCents;
-  }
-}
-
-export class CoinValuationMachine {
-  readonly coinTypes: Array<Coin>;
-  constructor() {
-    this.coinTypes = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];
-  }
-
-  public getValueInCents(disc: Disc, onInvalid: (d: Disc) => void = (d) => {}): number {
-    var value = this.coinTypes.filter(ct => ct.diameterInMillimeters == disc.diameterInMillimeters && ct.weightInGrams == disc.weightInGrams)[0]?.valueInCents ?? 0;
-    if (value == 0)
-      onInvalid(disc);
-    return value;
-  }
-
-  public getCoinByValue(valueInCents: number, onCoinFound: (c: Coin) => void): void {
-    var coin = this.coinTypes.filter(ct => ct.valueInCents == valueInCents)[0];
-    if (coin)
-      onCoinFound(coin);
-  }
-}
-
-export interface IDisplay {
-  update(message: string): void;
-}
+    vendingMachine.vend("Chips");
+    expect("THANK YOU").equals(display.CurrentMessage);
+  });
+});
 
 class DisplayFake {
   public CurrentMessage: string = "";

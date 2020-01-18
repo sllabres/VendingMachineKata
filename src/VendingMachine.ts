@@ -1,4 +1,9 @@
-import { IDisplay, CoinValuationMachine, Disc, Message, DollarCurrencyFormat } from "../tests/VendingMachine.test";
+import { IDisplay } from "./IDisplay";
+import { Disc } from "./Disc";
+import { Message } from "./Message";
+import { CoinValuationMachine } from "./CoinValuationMachine";
+import { DollarCurrencyFormat } from "./DollarCurrencyFormat";
+
 export class VendingMachine {
     private readonly display: IDisplay;
     private readonly coinValuation: CoinValuationMachine;
@@ -14,6 +19,10 @@ export class VendingMachine {
         if (this.runningTotal >= 100) {
             this.display.update(Message.Thank);
             this.runningTotal -= 100;
+        }
+        else if (this.runningTotal >= 50) {
+            this.display.update(Message.Thank);
+            this.runningTotal -= 50;
         }
         else
             this.display.update(Message.Price);        
@@ -33,6 +42,7 @@ export class VendingMachine {
             this.ejectedCoins.push(d);
         });
         this.runningTotal += value;
-        this.display.update(DollarCurrencyFormat.Format(this.runningTotal));
+        this.refreshDisplay();        
     }
 }
+
