@@ -3,3 +3,5 @@ node_modules
 wwwroot
 obj
 out
+coverage
+.nyc_output

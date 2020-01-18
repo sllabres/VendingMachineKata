@@ -2,7 +2,7 @@ import { expect } from "chai";
 
 beforeEach(function () {
   display = new DisplayFake();
-  vendingMachine = new VendingMachine(display);
+  vendingMachine = new VendingMachine(display, coinValuation);
 });
 
 describe('given no coin inserted', function () {
@@ -13,16 +13,18 @@ describe('given no coin inserted', function () {
 
 describe('given nickel inserted', function () {
   it('displays "$0.05" message', function () {
-    var coinToInsert = new Disc(5, 21);
-    vendingMachine.insertCoin(coinToInsert);
+    coinValuation.getCoinByValue(5, (c) => {
+      vendingMachine.insertCoin(c);
+    });
     expect("$0.05").equals(display.CurrentMessage);
   });
 });
 
 describe('given dime inserted', function () {
   it('displays "$0.10" message', function () {
-    var coinToInsert = new Disc(2.2, 17);
-    vendingMachine.insertCoin(coinToInsert);
+    coinValuation.getCoinByValue(10, (c) => {
+      vendingMachine.insertCoin(c);
+    });
     expect("$0.10").equals(display.CurrentMessage);
   });
 });
@@ -41,6 +43,14 @@ describe('given two quarters inserted', function () {
     vendingMachine.insertCoin(coinToInsert);
     vendingMachine.insertCoin(coinToInsert);
     expect("$0.50").equals(display.CurrentMessage);
+  });
+});
+
+describe('given quarter and dime inserted', function () {
+  it('displays "$0.35" message', function () {
+    vendingMachine.insertCoin(new Disc(5, 24));
+    vendingMachine.insertCoin(new Disc(2.2, 17));
+    expect("$0.35").equals(display.CurrentMessage);
   });
 });
 
@@ -119,7 +129,7 @@ class Coin extends Disc {
   readonly valueInCents: number;
 
   constructor(weightInGrams: number, diameterInMillimeters: number, valueInCents: number) {
-    super(weightInGrams, diameterInMillimeters);    
+    super(weightInGrams, diameterInMillimeters);
     this.valueInCents = valueInCents;
   }
 }
@@ -130,20 +140,30 @@ class CoinValuationMachine {
     this.coinTypes = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];
   }
 
-  public getValueInCentsByCoin(disc: Disc): number {
-    return this.coinTypes.filter(ct => ct.diameterInMillimeters == disc.diameterInMillimeters && ct.weightInGrams == disc.weightInGrams)[0]?.valueInCents ?? 0;
+  public getValueInCents(disc: Disc, onFound: (v: number) => void, onInvalid: (d: Disc) => void): void {
+    var value = this.coinTypes.filter(ct => ct.diameterInMillimeters == disc.diameterInMillimeters && ct.weightInGrams == disc.weightInGrams)[0]?.valueInCents ?? 0;
+    if (value > 0)
+      onFound(value)
+    else
+      onInvalid(disc);
+  }
+
+  public getCoinByValue(valueInCents: number, onCoinFound: (c: Coin) => void): void {
+    var coin = this.coinTypes.filter(ct => ct.valueInCents == valueInCents)[0];
+    if (coin)
+      onCoinFound(coin);
   }
 }
 
 class VendingMachine {
   private readonly display: IDisplay;
-  private readonly coinMachine: CoinValuationMachine;
+  private readonly coinValuation: CoinValuationMachine;
   private runningTotal: number;
   private ejectedCoins: Array<Disc>;
 
-  constructor(display: IDisplay) {
+  constructor(display: IDisplay, coinValuation: CoinValuationMachine) {
     this.display = display;
-    this.coinMachine = new CoinValuationMachine();
+    this.coinValuation = coinValuation;
     this.runningTotal = 0;
     this.ejectedCoins = [];
   }
@@ -151,7 +171,7 @@ class VendingMachine {
   public vend(selection: string): void {
     this.display.update(Message.Price);
 
-    if(this.runningTotal == 100)
+    if (this.runningTotal == 100)
       this.display.update(Message.Thank);
   }
 
@@ -160,13 +180,12 @@ class VendingMachine {
   }
 
   public insertCoin(disc: Disc): void {
-    var coinValue = this.coinMachine.getValueInCentsByCoin(disc);
-    this.runningTotal += coinValue;
-    if (coinValue > 0)
+    this.coinValuation.getValueInCents(disc, (v) => {
+      this.runningTotal += v;
       this.display.update(DollarCurrencyFormat.Format(this.runningTotal));
-    else {
-      this.ejectedCoins.push(disc);
-    }
+    }, (d) => {
+      this.ejectedCoins.push(d);
+    });
   }
 }
 
@@ -182,4 +201,5 @@ class DisplayFake {
 }
 
 var display = new DisplayFake();
-var vendingMachine = new VendingMachine(display);
+var coinValuation = new CoinValuationMachine();
+var vendingMachine = new VendingMachine(display, coinValuation);
