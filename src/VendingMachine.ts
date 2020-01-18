@@ -1,20 +1,20 @@
 import { IDisplay } from "./IDisplay";
 import { Disc } from "./Disc";
 import { Message } from "./Message";
-import { CoinValuationMachine } from "./CoinValuationMachine";
+import { CoinMachine } from "./CoinValuationMachine";
 import { DollarCurrencyFormat } from "./DollarCurrencyFormat";
 import { ProductStore, Product } from "./ProductStore";
 
 export class VendingMachine {
     private readonly display: IDisplay;
-    private readonly coinValuation: CoinValuationMachine;
+    private readonly coinMachine: CoinMachine;
     private readonly productStore: ProductStore;
     private runningTotal: number;
     private ejectedCoins: Array<Disc>;
 
-    constructor(display: IDisplay, coinValuation: CoinValuationMachine, productStore: ProductStore) {
+    constructor(display: IDisplay, coinValuation: CoinMachine, productStore: ProductStore) {
         this.display = display;
-        this.coinValuation = coinValuation;
+        this.coinMachine = coinValuation;
         this.runningTotal = 0;
         this.ejectedCoins = [];
         this.productStore = productStore;
@@ -32,8 +32,10 @@ export class VendingMachine {
     }
 
     public getChange(): Array<Disc> {
-        return this.ejectedCoins;
+        var coins = this.coinMachine.getCoinsByValue(this.runningTotal);
+        return this.ejectedCoins.concat(coins);
     }
+
     public refreshDisplay(): void {
         if (this.runningTotal == 0) {
             this.display.update(Message.NoCoin);
@@ -42,7 +44,7 @@ export class VendingMachine {
         }
     }
     public insertCoin(disc: Disc): void {
-        var value = this.coinValuation.getValueInCents(disc, (d) => {
+        var value = this.coinMachine.getValueInCents(disc, (d) => {
             this.ejectedCoins.push(d);
         });
         this.runningTotal += value;

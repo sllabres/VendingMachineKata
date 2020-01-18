@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { VendingMachine } from "../src/VendingMachine";
 import { ProductStore, Product } from "../src/ProductStore";
-import { CoinValuationMachine } from "../src/CoinValuationMachine";
+import { CoinMachine } from "../src/CoinValuationMachine";
 
 class DisplayFake {
   public CurrentMessage: string = "";
@@ -10,10 +10,10 @@ class DisplayFake {
   }
 }
 
-var coinValuation: CoinValuationMachine;
+var coinValuation: CoinMachine;
 
 beforeEach(function () {
-  coinValuation = new CoinValuationMachine();  
+  coinValuation = new CoinMachine();  
 });
 
 describe('given 25 cents', function () {

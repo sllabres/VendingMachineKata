@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { VendingMachine } from "../src/VendingMachine";
 import { ProductStore, Product } from "../src/ProductStore";
 import { Message } from "../src/Message";
-import { CoinValuationMachine } from "../src/CoinValuationMachine";
+import { CoinMachine } from "../src/CoinValuationMachine";
 
 class DisplayFake {
   public CurrentMessage: string = "";
@@ -12,13 +12,13 @@ class DisplayFake {
 }
 
 var display: DisplayFake;
-var coinValuation: CoinValuationMachine;
+var coinValuation: CoinMachine;
 var productStore: ProductStore;
 var vendingMachine: VendingMachine;
 
 beforeEach(function () {
   display = new DisplayFake();
-  coinValuation = new CoinValuationMachine();
+  coinValuation = new CoinMachine();
   productStore = new ProductStore([new Product("Cola", 100), new Product("Chips", 50), new Product("Candy", 65)]);
   vendingMachine = new VendingMachine(display, coinValuation, productStore);
 });
@@ -87,6 +87,8 @@ describe('given cola product selected and extra amount inserted', function () {
     expect(Message.Thank).equals(display.CurrentMessage);
     vendingMachine.refreshDisplay();
     expect("$0.25").equals(display.CurrentMessage);
+    var changeValue = coinValuation.getValueInCents(vendingMachine.getChange()[0]);    
+    expect(changeValue).equals(25);
   });
 });
 

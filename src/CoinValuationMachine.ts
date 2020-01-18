@@ -1,7 +1,7 @@
 import { Coin } from "./Coin";
 import { Disc } from "./Disc";
 
-export class CoinValuationMachine {
+export class CoinMachine {
     readonly coinTypes: Array<Coin>;
     constructor() {
       this.coinTypes = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];

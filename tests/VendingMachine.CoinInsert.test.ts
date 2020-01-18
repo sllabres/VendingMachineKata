@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { VendingMachine } from "../src/VendingMachine";
 import { ProductStore, Product } from "../src/ProductStore";
 import { Message } from "../src/Message";
-import { CoinValuationMachine } from "../src/CoinValuationMachine";
+import { CoinMachine } from "../src/CoinValuationMachine";
 import { Disc } from "../src/Disc";
 
 class DisplayFake {
@@ -13,12 +13,12 @@ class DisplayFake {
 }
 
 var display: DisplayFake;
-var coinValuation: CoinValuationMachine;
+var coinValuation: CoinMachine;
 var vendingMachine: VendingMachine;
 
 beforeEach(function () {
   display = new DisplayFake();
-  coinValuation = new CoinValuationMachine();  
+  coinValuation = new CoinMachine();  
   vendingMachine = new VendingMachine(display, coinValuation, new ProductStore([]));
 });
 
@@ -101,6 +101,6 @@ describe('given quarter and then invalid coin inserted', function () {
     vendingMachine.insertCoin(new Disc(0, 0));
     var change = vendingMachine.getChange();
     expect("$0.25").equals(display.CurrentMessage);
-    expect(1).equals(change.length);
+    expect(2).equals(change.length);
   });
 });
