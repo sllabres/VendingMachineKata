@@ -2,12 +2,12 @@ import { Coin } from "./Coin";
 export class ChangeMachine {
   readonly coinStock: Array<Coin>;
   constructor(coins: Array<Coin>) {
-    this.coinStock = coins;
+    this.coinStock = coins.sort((a, b) => b.valueInCents - a.valueInCents);
   }
   public getCoinsByValue(valueInCents: number): Array<Coin> {
     var coins: Array<Coin> = [];
     var changeRemaining: number = valueInCents;
-    this.coinStock.sort((a, b) => b.valueInCents - a.valueInCents).forEach(c => {
+    this.coinStock.forEach(c => {
       var quotient = Math.floor(changeRemaining / c.valueInCents);      
       for (let i = 0; i < quotient; i++) {
         changeRemaining -= c.valueInCents;

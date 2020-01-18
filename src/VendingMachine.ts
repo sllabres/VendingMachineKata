@@ -12,7 +12,7 @@ export class VendingMachine {
     private readonly productStore: ProductStore;
     private readonly changeMachine: ChangeMachine;
     private runningTotal: number;
-    private ejectedCoins: Array<Disc>;    
+    private ejectedCoins: Array<Disc>;
 
     constructor(display: IDisplay, coinValuation: CoinValuationMachine, productStore: ProductStore, changeMachine: ChangeMachine) {
         this.changeMachine = changeMachine;
@@ -22,7 +22,7 @@ export class VendingMachine {
         this.ejectedCoins = [];
         this.productStore = productStore;
     }
-    
+
     public vend(selection: string): void {
         this.productStore.Purchase(selection, (p: Product) => {
             if (this.runningTotal >= p.Value) {
@@ -38,13 +38,13 @@ export class VendingMachine {
 
     public getChange(): Array<Disc> {
         var coins = this.changeMachine.getCoinsByValue(this.runningTotal);
-        this.runningTotal = 0;        
+        this.runningTotal = 0;
         return this.ejectedCoins.concat(coins);
     }
 
     public refreshDisplay(): void {
-        if (this.runningTotal == 0) {            
-           this.display.update(this.productStore.GetAllStock().every(p => this.changeMachine.canGiveChangeOnAmount(p.Value)) ? Messages.InsertCoin : Messages.ExactChange);
+        if (this.runningTotal == 0) {
+            this.display.update(this.productStore.GetAll().every(p => this.changeMachine.canGiveChangeOnAmount(p.Value)) ? Messages.InsertCoin : Messages.ExactChange);
         } else {
             this.display.update(DollarCurrencyFormat.Format(this.runningTotal));
         }

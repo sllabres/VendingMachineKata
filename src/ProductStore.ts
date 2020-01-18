@@ -14,7 +14,7 @@ export class ProductStore {
         }
     }
 
-    public GetAllStock(): Array<Product> {
+    public GetAll(): Array<Product> {
         return this.products;
     }
 }

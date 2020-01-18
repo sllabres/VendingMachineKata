@@ -5,6 +5,7 @@ import { Messages } from "../src/Messages";
 import { CoinValuationMachine } from "../src/CoinValuationMachine";
 import { ChangeMachine } from "../src/ChangeMachine";
 import { Coin } from "../src/Coin";
+import { Disc } from "../src/Disc";
 
 class DisplayFake {
   public CurrentMessage: string = "";
@@ -17,11 +18,13 @@ var display: DisplayFake;
 var coinMachine: CoinValuationMachine;
 var productStore: ProductStore;
 var vendingMachine: VendingMachine;
+var quater: Disc;
 
 beforeEach(function () {
-  display = new DisplayFake();  
+  display = new DisplayFake();
   var coins = [new Coin(5, 24, 25), new Coin(5, 21, 5), new Coin(2.2, 17, 10)];
   coinMachine = new CoinValuationMachine(coins);
+  quater = coinMachine.getCoinByValue(25);
   productStore = new ProductStore([new Product("Cola", 100, 10), new Product("Chips", 50, 10), new Product("Candy", 65, 10)]);
   vendingMachine = new VendingMachine(display, coinMachine, productStore, new ChangeMachine(coins));
 });
@@ -36,23 +39,18 @@ describe('given cola product selected and no coins inserted', function () {
 
 describe('given cola product selected and wrong amount inserted', function () {
   it('displays "PRICE" message', function () {
-    coinMachine.getCoinByValue(25, (c) => {
-      vendingMachine.insertCoin(c);
-    });
-
+    vendingMachine.insertCoin(quater);
     vendingMachine.vend("Cola");
-    expect(Messages.Price).equals(display.CurrentMessage);    
+    expect(Messages.Price).equals(display.CurrentMessage);
   });
 });
 
 describe('given cola product selected and right amount inserted', function () {
   it('displays "THANK YOU" message', function () {
-    coinMachine.getCoinByValue(25, (c) => {
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-    });
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
 
     vendingMachine.vend("Cola");
     expect(Messages.Thank).equals(display.CurrentMessage);
@@ -61,12 +59,10 @@ describe('given cola product selected and right amount inserted', function () {
 
 describe('given cola product selected and right amount inserted vend pressed again', function () {
   it('displays "INSERT COIN" message', function () {
-    coinMachine.getCoinByValue(25, (c) => {
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-    });
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
 
     vendingMachine.vend("Cola");
     vendingMachine.vend("Cola");
@@ -78,29 +74,25 @@ describe('given cola product selected and right amount inserted vend pressed aga
 
 describe('given cola product selected and extra amount inserted', function () {
   it('displays "THANK YOU" message and displays amount left', function () {
-    coinMachine.getCoinByValue(25, (c) => {
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-    });
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
 
     vendingMachine.vend("Cola");
     expect(Messages.Thank).equals(display.CurrentMessage);
     vendingMachine.refreshDisplay();
     expect("$0.25").equals(display.CurrentMessage);
-    var changeValue = coinMachine.getValueInCents(vendingMachine.getChange()[0]);    
+    var changeValue = coinMachine.getValueInCents(vendingMachine.getChange()[0]);
     expect(changeValue).equals(25);
   });
 });
 
 describe('given chips product selected and right amount inserted', function () {
   it('displays "THANK YOU" message', function () {
-    coinMachine.getCoinByValue(25, (c) => {
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-    });
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);    
 
     vendingMachine.vend("Chips");
     expect(Messages.Thank).equals(display.CurrentMessage);
@@ -109,11 +101,9 @@ describe('given chips product selected and right amount inserted', function () {
 
 describe('given candy product selected', function () {
   it('displays "THANK YOU" then "$0.10" message', function () {
-    coinMachine.getCoinByValue(25, (c) => {
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-    });
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);    
 
     vendingMachine.vend("Candy");
     expect(Messages.Thank).equals(display.CurrentMessage);
@@ -124,10 +114,8 @@ describe('given candy product selected', function () {
 
 describe('given invalid product selected', function () {
   it('displays "$0.50" message', function () {
-    coinMachine.getCoinByValue(25, (c) => {
-      vendingMachine.insertCoin(c);
-      vendingMachine.insertCoin(c);
-    });
+    vendingMachine.insertCoin(quater);
+    vendingMachine.insertCoin(quater);
 
     vendingMachine.vend("INVALID");
     expect("$0.50").equals(display.CurrentMessage);
