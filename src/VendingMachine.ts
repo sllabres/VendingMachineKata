@@ -28,6 +28,8 @@ export class VendingMachine {
             } else {
                 this.display.update(Message.Price);
             }
+        }, () => {
+            this.display.update(Message.SoldOut);
         });
     }
 

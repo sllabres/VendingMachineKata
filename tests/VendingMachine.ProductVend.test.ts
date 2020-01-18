@@ -19,7 +19,7 @@ var vendingMachine: VendingMachine;
 beforeEach(function () {
   display = new DisplayFake();
   coinValuation = new CoinMachine();
-  productStore = new ProductStore([new Product("Cola", 100), new Product("Chips", 50), new Product("Candy", 65)]);
+  productStore = new ProductStore([new Product("Cola", 100, 1), new Product("Chips", 50, 1), new Product("Candy", 65, 1)]);
   vendingMachine = new VendingMachine(display, coinValuation, productStore);
 });
 
