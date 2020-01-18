@@ -184,3 +184,15 @@ describe('given chips product selected and right amount inserted', function () {
     expect("THANK YOU").equals(display.CurrentMessage);
   });
 });
+
+describe('given invalid product selected', function () {
+  it('displays "$0.50" message', function () {
+    coinValuation.getCoinByValue(25, (c) => {
+      vendingMachine.insertCoin(c);
+      vendingMachine.insertCoin(c);
+    });
+
+    vendingMachine.vend("INVALID");
+    expect("$0.50").equals(display.CurrentMessage);
+  });
+});
