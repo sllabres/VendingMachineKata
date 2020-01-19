@@ -7,6 +7,7 @@ import { ChangeMachine } from "../src/ChangeMachine";
 import { Disc } from "../src/Disc";
 import { Coin } from "../src/Coin";
 import { DisplayFake } from "./DisplayFake";
+import { ProductDispneserFake } from "./ProductDispneserFake";
 
 var display: DisplayFake;
 var coinMachine: CoinValuationMachine;
@@ -16,9 +17,9 @@ var dime: Coin = new Coin(5, 21, 10);
 var nickel: Coin = new Coin(2.2, 17, 5);
 
 beforeEach(function () {
-  display = new DisplayFake();
+  display = new DisplayFake();  
   coinMachine = new CoinValuationMachine([quater, dime, nickel]);  
-  vendingMachine = new VendingMachine(display, coinMachine, new ProductStore([]), new ChangeMachine([quater]));
+  vendingMachine = new VendingMachine(display, coinMachine, new ProductStore([]), new ChangeMachine([quater]), new ProductDispneserFake());
 });
 
 describe('given no coin inserted', function () {

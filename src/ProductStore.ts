@@ -29,3 +29,9 @@ export class Product {
         this.Quantity = quantity;
     }
 }
+
+export class NullProduct extends Product {
+    constructor() {
+      super("nullproduct", 0, 0);
+    }
+  }

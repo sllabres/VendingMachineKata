@@ -5,7 +5,7 @@ import { Messages } from "../src/Messages";
 import { CoinValuationMachine } from "../src/CoinValuationMachine";
 import { ChangeMachine } from "../src/ChangeMachine";
 import { Coin } from "../src/Coin";
-import { Disc } from "../src/Disc";
+import { ProductDispneserFake } from "./ProductDispneserFake";
 
 class DisplayFake {
   public CurrentMessage: string = "";
@@ -27,7 +27,7 @@ beforeEach(function () {
   var coins = [quater, nickel, dime];
   coinMachine = new CoinValuationMachine(coins);  
   productStore = new ProductStore([new Product("Cola", 100, 10), new Product("Chips", 50, 10), new Product("Candy", 65, 10)]);
-  vendingMachine = new VendingMachine(display, coinMachine, productStore, new ChangeMachine(coins));
+  vendingMachine = new VendingMachine(display, coinMachine, productStore, new ChangeMachine(coins), new ProductDispneserFake());
 });
 
 describe('given cola product selected and no coins inserted', function () {

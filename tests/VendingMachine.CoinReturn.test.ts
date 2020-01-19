@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import { CoinValuationMachine } from "../src/CoinValuationMachine";
 import { ChangeMachine } from "../src/ChangeMachine";
 import { Coin } from "../src/Coin";
 

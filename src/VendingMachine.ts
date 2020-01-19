@@ -6,21 +6,27 @@ import { ChangeMachine } from "./ChangeMachine";
 import { DollarCurrencyFormat } from "./DollarCurrencyFormat";
 import { ProductStore, Product } from "./ProductStore";
 
+export interface IProductDispenser{ 
+    dispense(product: Product) : void;
+}
+
 export class VendingMachine {
     private readonly display: IDisplay;
     private readonly coinMachine: CoinValuationMachine;
     private readonly productStore: ProductStore;
     private readonly changeMachine: ChangeMachine;
+    private readonly productDispenser: IProductDispenser;
     private runningTotal: number;
     private ejectedCoins: Array<Disc>;
 
-    constructor(display: IDisplay, coinValuation: CoinValuationMachine, productStore: ProductStore, changeMachine: ChangeMachine) {
+    constructor(display: IDisplay, coinValuation: CoinValuationMachine, productStore: ProductStore, changeMachine: ChangeMachine, productDispenser: IProductDispenser) {
         this.changeMachine = changeMachine;
         this.display = display;
         this.coinMachine = coinValuation;
         this.runningTotal = 0;
         this.ejectedCoins = [];
         this.productStore = productStore;
+        this.productDispenser = productDispenser;
     }
 
     public vend(selection: string): void {
@@ -28,6 +34,7 @@ export class VendingMachine {
             if (this.runningTotal >= p.Value) {
                 this.display.update(Messages.Thank);
                 this.runningTotal -= p.Value;
+                this.productDispenser.dispense(p);
             } else {
                 this.display.update(Messages.Price);
             }
